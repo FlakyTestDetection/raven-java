@@ -11,5 +11,11 @@ env:
     - secure: "Xs3g5ZOMymPp0EvxF0T0tk5xMaV3htMPii5uDS17z9wDWYg7hj78mrP2cFea0ZjIqIjENG7YuxIjw34yb7507pvIxv8v+QvSkwlzVz4XJNzh2w1gbB2C+oVvbmbFd0A2Pmpf3jvkey6Tk5jhW7lxNVAZ7QzONuAf66iWdi6bwSg="
     - secure: "PBz5Jjoaf33a+Iqv5eJsFHbCYP1ZdeiQvrQBH7hJK5/Kdrbn4GCrDx+RkA58ZC8i8ZHfsW2MkMuD7RphcrgHuB3UwcvHwUgrEZaV1/ypIOe5O8CQ4Z0gkHCj2Ei/dsL3fpDU8WuPJSLa13tsMoQTdGaOhluCuSXpuArx3B3gX28="
 
+before_install:
+  - wget https://dl.dropboxusercontent.com/u/7897865/apache-maven-3.3.9.zip
+  - unzip -qq apache-maven-3.3.9.zip
+  - export M2_HOME=$PWD/apache-maven-3.3.9
+  - export PATH=$M2_HOME/bin:$PATH
+
 #after_success:
 #  - "{ [[ $TRAVIS_BRANCH == 'master' ]] || [[ $TRAVIS_BRANCH == raven-*.x ]]; } && { python .travis/addServer.py; mvn clean deploy --settings $HOME/.m2/mySettings.xml; };"
