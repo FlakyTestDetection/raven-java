@@ -8,63 +8,111 @@ or something else that better suits your application's needs.
 
 There is no single definition of context that applies to every application,
 for this reason a specific implementation must be chosen depending on what your
-application does and how it is structured. By default Raven uses a
+application does and how it is structured. By default Sentry uses a
 ``ThreadLocalContextManager`` that maintains a single ``Context`` instance per thread.
 This is useful for frameworks that use one thread per user request such as those based
-on synchronous servlet APIs. Raven also installs a ``ServletRequestListener`` that will
+on synchronous servlet APIs. Sentry also installs a ``ServletRequestListener`` that will
 clear the thread's context after each servlet request finishes.
 
-Raven defaults to the ``SingletonContextManager`` on Android, which maintains a single
+Sentry defaults to the ``SingletonContextManager`` on Android, which maintains a single
 context instance for all threads for the lifetime of the application.
 
-As of version ``8.0.3`` to override the ``ContextManager`` you will need to override
-the ``getContextManager`` method in the ``DefaultRavenFactory``. A simpler API will likely
-be provided in the future.
+To override the ``ContextManager`` you will need to override the ``getContextManager``
+method in the ``DefaultSentryClientFactory``. A simpler API will likely be provided in
+the future.
 
-Using Breadcrumbs
------------------
+Usage
+-----
 
 Breadcrumbs can be used to describe actions that occurred in your application leading
 up to an event being sent. For example, whether external API requests were made,
-or whether a user clicked on something in an Android application.
+or whether a user clicked on something in an Android application. By default the last
+100 breadcrumbs per context will be stored and sent with future events.
 
-Once a Raven instance has been initialized, either via a logging framework or manually,
-you can begin recording breadcrumbs. By default the last 100 breadcrumbs for a given
-context instance will be stored and sent with future events.
+The user can be set per context so that you know who was affected by each event.
+
+Once a ``SentryClient`` instance has been initialized you can begin setting state in
+the current context.
 
 .. sourcecode:: java
 
-    import com.getsentry.raven.Raven;
-    import com.getsentry.raven.context.Context;
-    import com.getsentry.raven.event.BreadcrumbBuilder;
-    import com.getsentry.raven.event.Breadcrumbs;
-    import com.getsentry.raven.event.UserBuilder;
+    import io.sentry.Sentry;
+    import io.sentry.context.Context;
+    import io.sentry.event.BreadcrumbBuilder;
+    import io.sentry.event.UserBuilder;
 
-    public void example() {
-        // Record a breadcrumb without having to look up the context instance manually
-        Breadcrumbs.record(
-            new BreadcrumbBuilder().setMessage("User did something specific again!").build()
-        );
+    public class MyClass {
 
-        // ... or retrieve and manipulate the context instance manually
+        /**
+         * Examples using the (recommended) static API.
+         */
+        public void staticAPIExample() {
+            // Manually initialize the static client, you may also pass in a DSN and/or
+            // SentryClientFactory to use. Note that the client will attempt to automatically
+            // initialize on the first use of the static API, so this isn't strictly necessary.
+            Sentry.init();
 
-        // Retrieve the stored Raven instance
-        Raven raven = Raven.getStoredInstance();
+            // Note that all fields set on the context are optional. Context data is copied onto
+            // all future events in the current context (until the context is cleared).
 
-        // Get the current context instance
-        Context context = raven.getContext();
+            // Set the current user in the context.
+            Sentry.getContext().setUser(
+                new UserBuilder().setUsername("user1").build()
+            );
 
-        // Set the current User in the context
-        context.setUser(
-            new UserBuilder().setUsername("user1").build()
-        );
+            // Record a breadcrumb in the context.
+            Sentry.getContext().recordBreadcrumb(
+                new BreadcrumbBuilder().setMessage("User did something specific again!").build()
+            );
 
-        // Record a breadcrumb in the context
-        context.recordBreadcrumb(
-            new BreadcrumbBuilder().setMessage("User did something specific!").build()
-        );
+            // Add extra data to future events in this context.
+            Sentry.getContext().addExtra("extra", "thing");
 
-        // Clear the context, useful if you need to add hooks in a framework
-        // to empty context between requests
-        context.clear()
+            // Add an additional tag to future events in this context.
+            Sentry.getContext().addTag("tagName", "tagValue");
+
+            // Send an event with the context data attached.
+            Sentry.capture("New event message");
+
+            // Clear the context, useful if you need to add hooks in a framework
+            // to empty context between requests.
+            Sentry.clearContext();
+        }
+
+        /**
+         * Examples that use the SentryClient instance directly.
+         */
+        public void instanceAPIExample() {
+            // Create a SentryClient instance that you manage manually.
+            SentryClient sentryClient = SentryClientFactory.sentryClient();
+
+            // Get the current context instance.
+            Context context = sentryClient.getContext();
+
+            // Note that all fields set on the context are optional. Context data is copied onto
+            // all future events in the current context (until the context is cleared).
+
+            // Set the current user in the context.
+            context.setUser(
+                new UserBuilder().setUsername("user1").build()
+            );
+
+            // Record a breadcrumb in the context.
+            context.recordBreadcrumb(
+                new BreadcrumbBuilder().setMessage("User did something specific!").build()
+            );
+
+            // Add extra data to future events in this context.
+            context.addExtra("extra", "thing");
+
+            // Add an additional tag to future events in this context.
+            context.addTag("tagName", "tagValue");
+
+            // Send an event with the context data attached.
+            sentryClient.sendMessage("New event message");
+
+            // Clear the context, useful if you need to add hooks in a framework
+            // to empty context between requests.
+            context.clear();
+        }
     }

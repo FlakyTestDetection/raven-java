@@ -13,10 +13,10 @@
     "java.logging": {
       "name": "java.util.logging",
       "type": "framework",
-      "doc_link": "modules/raven/",
+      "doc_link": "modules/jul/",
       "wizard": [
-        "modules/raven#installation",
-        "modules/raven#usage"
+        "modules/jul#installation",
+        "modules/jul#usage"
       ]
     },
     "java.log4j": {

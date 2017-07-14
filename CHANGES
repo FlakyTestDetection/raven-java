@@ -4,9 +4,70 @@ Version 8.0.4
 -
 
 Version 8.0.3
+Version 1.3.1
 -------------
 
 -
+
+Version 1.3.0
+-------------
+
+- Deprecate ``extratags`` in favor of the more clear ``mdctags``.
+- Add ability to set ``extra`` data via options and on ``SentryClient`` instances.
+- Add ability to set ``extra`` data and ``tags`` in the current context.
+
+Version 1.2.2
+-------------
+
+- Make operations on Context threadsafe.
+
+Version 1.2.1
+-------------
+
+- Fix ``SentryStackTraceElement`` to implement ``Serializable``.
+
+Version 1.2.0
+-------------
+
+- Allow overriding the location of the properties file.
+- Add support for handling and uploading Proguard files to Sentry (for Android applications).
+- Cleanup thread local context in ``ThreadLocalContextManager`` after each servlet request finishes.
+- Change the ``EventBuilder`` hostname lookup code to only run one thread at a time.
+- Add ``ShouldSendEventCallback``, which can be added to each ``SentryClient`` instance.
+- Add ability to set extra data on the ``UserInterface``.
+
+Version 1.1.0
+-------------
+
+- Add ability to set the culprit from a SentryStackTraceElement.
+- (alpha) Add agent to collect local variable informatino when an exception occurs.
+
+Version 1.0.0
+-------------
+
+1.0.0 is a major refactor, please see the official documentation to see how configuration and usage
+has changed: https://docs.sentry.io/clients/java/
+
+- Move from ``com.getsentry.raven`` package to ``io.sentry``.
+- Rename from ``raven-java`` to ``sentry-java``.
+- Rename the ``Sentry`` class to ``SentryClient``.
+- Rename the ``SentryFactory`` class to ``SentryClientFactory``, and renamed all subclasses
+  to now end in ``ClientFactory``.
+- Remove ``Breadcrumbs`` class.
+- Add new ``Sentry`` class for static client initialization, access and usage.
+- Remove ``android.Sentry`` in favor of using the single static ``Sentry`` class everywhere.
+- Rename ``sentryFactory`` option to ``factory`` so that the environment variable configuration is
+  now ``SENTRY_FACTORY`` and the Java System Property is ``sentry.factory``.
+- Add ``dist`` field to Event.
+- Compressed JSON payloads are no longer base64 encoded.
+- Rename ``EventSendFailureCallback`` to ``EventSendCallback``, add ``onSuccess`` callback.
+- Add way to set release, dist, environment, serverName, tags, and extraTags on a ``SentryClient``.
+- Add way to set release, dist, environment, serverName, tags, and extraTags via the DSN.
+- Logging integrations now use the new ``Sentry`` static API.
+- Configuration can now be provided by a ``sentry.properties`` file provided in resources.
+
+raven-java changelog (before rename to sentry-java)
+===================================================
 
 Version 8.0.2
 -------------

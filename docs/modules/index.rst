@@ -1,7 +1,9 @@
+.. _integrations:
+
 Integrations
 ============
 
-The Raven Java SDK comes with support for some frameworks and libraries so that
+The Sentry Java SDK comes with support for some frameworks and libraries so that
 you don't have to capture and send errors manually.
 
 .. toctree::
@@ -9,7 +11,7 @@ you don't have to capture and send errors manually.
 
    android
    appengine
-   raven
+   jul
    log4j
    log4j2
    logback

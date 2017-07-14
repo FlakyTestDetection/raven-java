@@ -1,13 +1,22 @@
 Logback
 =======
 
-The ``raven-logback`` library provides `Logback <http://logback.qos.ch/>`_
-support for Raven via an `Appender
+The ``sentry-logback`` library provides `Logback <http://logback.qos.ch/>`_
+support for Sentry via an `Appender
 <http://logback.qos.ch/apidocs/ch/qos/logback/core/Appender.html>`_
-that sends logged exceptions to Sentry.
+that sends logged exceptions to Sentry. Once this integration is configured
+you can *also* use Sentry's static API, :ref:`as shown on the usage page <usage_example>`,
+in order to do things like record breadcrumbs, set the current user, or manually send
+events.
 
 The source can be found `on Github
-<https://github.com/getsentry/raven-java/tree/master/raven-logback>`_.
+<https://github.com/getsentry/sentry-java/tree/master/sentry-logback>`_.
+
+**Note:** The old ``raven-logback`` library is no longer maintained. It is highly recommended that
+you `migrate <https://docs.sentry.io/clients/java/migration/>`_ to ``sentry-logback`` (which this
+documentation covers). `Check out the migration guide <https://docs.sentry.io/clients/java/migration/>`_
+for more information. If you are still using ``raven-logback`` you can
+`find the old documentation here <https://github.com/getsentry/sentry-java/blob/raven-java-8.x/docs/modules/logback.rst>`_.
 
 Installation
 ------------
@@ -17,24 +26,24 @@ Using Maven:
 .. sourcecode:: xml
 
     <dependency>
-        <groupId>com.getsentry.raven</groupId>
-        <artifactId>raven-logback</artifactId>
-        <version>8.0.3</version>
+        <groupId>io.sentry</groupId>
+        <artifactId>sentry-logback</artifactId>
+        <version>1.3.0</version>
     </dependency>
 
 Using Gradle:
 
 .. sourcecode:: groovy
 
-    compile 'com.getsentry.raven:raven-logback:8.0.3'
+    compile 'io.sentry:sentry-logback:1.3.0'
 
 Using SBT:
 
 .. sourcecode:: scala
 
-    libraryDependencies += "com.getsentry.raven" % "raven-logback" % "8.0.3"
+    libraryDependencies += "io.sentry" % "sentry-logback" % "1.3.0"
 
-For other dependency managers see the `central Maven repository <https://search.maven.org/#artifactdetails%7Ccom.getsentry.raven%7Craven-logback%7C8.0.3%7Cjar>`_.
+For other dependency managers see the `central Maven repository <https://search.maven.org/#artifactdetails%7Cio.sentry%7Csentry-logback%7C1.3.0%7Cjar>`_.
 
 Usage
 -----
@@ -58,14 +67,14 @@ Example configuration using the ``logback.xml`` format:
         </appender>
 
         <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
-        <appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
+        <appender name="Sentry" class="io.sentry.logback.SentryAppender">
             <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
                 <level>WARN</level>
             </filter>
         </appender>
 
         <!-- Enable the Console and Sentry appenders, Console is provided as an example
-             of a non-Raven logger that is set to a different logging threshold -->
+             of a non-Sentry logger that is set to a different logging threshold -->
         <root level="INFO">
             <appender-ref ref="Console" />
             <appender-ref ref="Sentry" />
@@ -73,95 +82,7 @@ Example configuration using the ``logback.xml`` format:
     </configuration>
 
 Next, **you'll need to configure your DSN** (client key) and optionally other values such as
-``environment`` and ``release``. See below for the two ways you can do this.
-
-Configuration via Runtime Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is the most flexible method for configuring the ``SentryAppender``,
-because it can be easily changed based on the environment you run your
-application in.
-
-The following can be set as System Environment variables:
-
-.. sourcecode:: shell
-
-    SENTRY_EXAMPLE=xxx java -jar app.jar
-
-Or as Java System Properties:
-
-.. sourcecode:: shell
-
-    java -Dsentry.example=xxx -jar app.jar
-
-Configuration parameters follow:
-
-======================= ======================= =============================== ===========
-Environment variable    Java System Property    Example value                   Description
-======================= ======================= =============================== ===========
-``SENTRY_DSN``          ``sentry.dsn``          ``https://host:port/1?options`` Your Sentry DSN (client key), if left blank Raven will no-op
-``SENTRY_RELEASE``      ``sentry.release``      ``1.0.0``                       Optional, provide release version of your application
-``SENTRY_ENVIRONMENT``  ``sentry.environment``  ``production``                  Optional, provide environment your application is running in
-``SENTRY_SERVERNAME``   ``sentry.servername``   ``server1``                     Optional, override the server name (rather than looking it up dynamically)
-``SENTRY_RAVENFACTORY`` ``sentry.ravenfactory`` ``com.foo.RavenFactory``        Optional, select the ravenFactory class
-``SENTRY_TAGS``         ``sentry.tags``         ``tag1:value1,tag2:value2``     Optional, provide tags
-``SENTRY_EXTRATAGS``    ``sentry.extratags``    ``foo,bar,baz``                 Optional, provide tag names to be extracted from MDC
-======================= ======================= =============================== ===========
-
-Configuration via Static File
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can also configure everything statically within the ``logback.xml``
-file itself. This is less flexible and not recommended because it's more difficult to change
-the values when you run your application in different environments.
-
-Example configuration in the ``logback.xml`` file:
-
-.. sourcecode:: xml
-
-    <configuration>
-        <!-- Configure the Console appender -->
-        <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            </encoder>
-        </appender>
-
-        <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
-        <appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
-            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-                <level>WARN</level>
-            </filter>
-
-            <!-- Set Sentry DSN -->
-            <dsn>https://host:port/1?options</dsn>
-
-            <!-- Optional, provide release version of your application -->
-            <release>1.0.0</release>
-
-            <!-- Optional, provide environment your application is running in -->
-            <environment>production</environment>
-
-            <!-- Optional, override the server name (rather than looking it up dynamically) -->
-            <serverName>server1</serverName>
-
-            <!-- Optional, select the ravenFactory class -->
-            <ravenFactory>com.foo.RavenFactory</ravenFactory>
-
-            <!-- Optional, provide tags -->
-            <tags>tag1:value1,tag2:value2</tags>
-
-            <!-- Optional, provide tag names to be extracted from MDC -->
-            <extraTags>foo,bar,baz</extraTags>
-        </appender>
-
-        <!-- Enable the Console and Sentry appenders, Console is provided as an example
-             of a non-Raven logger that is set to a different logging threshold -->
-        <root level="INFO">
-            <appender-ref ref="Console" />
-            <appender-ref ref="Sentry" />
-        </root>
-    </configuration>
+``environment`` and ``release``.   :ref:`See the configuration page <setting_the_dsn>` for ways you can do this.
 
 Additional Data
 ---------------
@@ -173,13 +94,9 @@ Mapped Tags
 ~~~~~~~~~~~
 
 By default all MDC parameters are stored under the "Additional Data" tab in Sentry. By
-specifying the ``extraTags`` parameter in your configuration file you can
+specifying the ``mdctags`` option in your configuration you can
 choose which MDC keys to send as tags instead, which allows them to be used as
 filters within the Sentry UI.
-
-.. sourcecode:: xml
-
-    <extraTags>Environment,OS</extraTags>
 
 .. sourcecode:: java
 
@@ -188,7 +105,7 @@ filters within the Sentry UI.
         MDC.put("Environment", "Development");
         MDC.put("OS", "Linux");
 
-        // This sends an event where the Environment and OS MDC values are set as tags
+        // This sends an event where the Environment and OS MDC values are set as additional data
         logger.error("This is a test");
     }
 
@@ -214,7 +131,7 @@ In Practice
         void logWithBreadcrumbs() {
             // Record a breadcrumb that will be sent with the next event(s),
             // by default the last 100 breadcrumbs are kept.
-            Breadcrumbs.record(
+            Sentry.record(
                 new BreadcrumbBuilder().setMessage("User made an action").build()
             );
 

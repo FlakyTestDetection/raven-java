@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packages="org.apache.logging.log4j.core,io.sentry.log4j2">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[SENTRY] [%-5p] %c - %m%n%throwable{none}"/>
+        </Console>
+        <Sentry name="Sentry" />
+    </appenders>
+
+    <loggers>
+        <logger name="log4j2.SentryAppenderIT" level="INFO">
+            <appender-ref ref="Sentry" level="WARN" />
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="Console" />
+        </root>
+    </loggers>
+</configuration>
