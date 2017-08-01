@@ -1,9 +1,16 @@
 Version 8.0.4
 Version 1.3.2
+Version 1.4.1
+-------------
+
+-
+
+Version 1.4.0
 -------------
 
 - Automatically set ``stacktrace.app.packages`` on Android if it is not provided by the user.
 - Enable UncaughtExceptionHandler by default, add ``uncaught.handler.enabled`` option.
+- Add Spring exception reporter and Spring Boot servlet initializer.
 
 Version 8.0.3
 Version 1.3.1

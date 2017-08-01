@@ -8,14 +8,15 @@
         <version>1.4.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sentry-logback</artifactId>
+    <artifactId>sentry-spring</artifactId>
     <packaging>jar</packaging>
 
-    <name>Sentry-Java for Logback</name>
-    <description>Logback appender allowing to send logs to the Sentry-Java client.</description>
+    <name>Sentry-Java for Spring</name>
+    <description>Spring exception handler and servlet initializer for sending exceptions to Sentry.</description>
 
     <properties>
-        <logback.version>1.2.1</logback.version>
+        <spring.version>4.3.10.RELEASE</spring.version>
+        <spring-boot.version>1.5.4.RELEASE</spring-boot.version>
     </properties>
 
     <dependencies>
@@ -24,18 +25,22 @@
             <artifactId>sentry</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
@@ -89,31 +94,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <sentry.dsn>
-                            http://8292bf61d620417282e68a72ae03154a:e3908e05ad874b24b7a168992bfa3577@localhost:8080/1?async=false
-                        </sentry.dsn>
-                        <logback.configurationFile>
-                            ${project.build.directory}/test-classes/logback-integration.xml
-                        </logback.configurationFile>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
