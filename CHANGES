@@ -3,7 +3,8 @@ Version 1.3.2
 Version 1.4.1
 -------------
 
--
+- Reduce logging noise if JNDI is missing.
+- Add OSGi support. (thanks markwoon)
 
 Version 1.4.0
 -------------
