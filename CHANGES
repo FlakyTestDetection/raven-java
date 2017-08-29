@@ -1,10 +1,27 @@
 Version 8.0.4
 Version 1.3.2
 Version 1.4.1
+Version 1.5.3
+-------------
+
+-
+
+Version 1.5.2
+-------------
+
+- Add ability to remove individual tags or extra data from the context, or clear them entirely.
+
+Version 1.5.1
+-------------
+
+- Don't attempt to serialize Iterables and don't special case serialization for Path objects, fixes broken Android release.
+
+Version 1.5.0
 -------------
 
 - Reduce logging noise if JNDI is missing.
 - Add OSGi support. (thanks markwoon)
+- Local variable agent beta.
 
 Version 1.4.0
 -------------
