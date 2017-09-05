@@ -4,7 +4,7 @@ Version 1.4.1
 Version 1.5.3
 -------------
 
--
+- Fix for buffering Events to disk that have null values in their extras map.
 
 Version 1.5.2
 -------------
