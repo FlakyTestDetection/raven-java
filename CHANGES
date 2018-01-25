@@ -9,7 +9,7 @@ Version 1.6.5
 Version 1.6.6
 -------------
 
--
+- Attempt to unregister async/buffer shutdown hooks when connection is closed. (thanks obourgain)
 
 Version 1.6.5
 -------------
