@@ -58,9 +58,13 @@ public class SentryUncaughtExceptionHandler implements Thread.UncaughtExceptionH
             }
         }
 
+        // taken from ThreadGroup#uncaughtException
         if (defaultExceptionHandler != null) {
             // call the original handler
             defaultExceptionHandler.uncaughtException(thread, thrown);
+        } else if (!(thrown instanceof ThreadDeath)) {
+            System.err.print("Exception in thread \"" + thread.getName() + "\" ");
+            thrown.printStackTrace(System.err);
         }
     }
 
